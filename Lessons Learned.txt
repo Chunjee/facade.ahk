@@ -1,0 +1,24 @@
+Combinator-Oriented Programming Is Practical ___________________________________
+
+Functional programming with explicit binding and combinators, without lambda abstraction is surprisingly usable.
+
+Of course, it would be better with lambda abstraction too.
+
+
+Do Not Apply Library Design Principles to an Interpreter _______________________
+
+Facade is more like an interpreter than a set of libraries.  Interpreters often contain recursive definitions.
+
+I expected forbidding circular dependencies to result in a clean, layered design.  Instead, it made Facade harder to implement and required some code duplication.
+
+
+Build Programming Languages Atop Simple Interfaces, Not Simple Functions _______
+
+It is better to make it easy to add new procedures than add new types that work with existing procedures, but there is nothing good about being unable to add new types that work with existing procedures.
+
+Plan how to solve the expression problem in your host programming language and your hosted programming language.  Introducing interfaces after implementing your programming language will probably require a rewrite.
+
+
+Use Format Strings for Internationalization ____________________________________
+
+Facade is not localized, but it uses format strings instead of strings mingled with code to reduce the potential difficulty of localizing it.

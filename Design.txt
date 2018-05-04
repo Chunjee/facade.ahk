@@ -1,0 +1,237 @@
+The Name _______________________________________________________________________
+
+Facade's name comes from the facade pattern.  It wraps some of AutoHotkey's APIs (specifically, most of the processing APIs) with better APIs to make them safer and more convenient.
+
+
+The Idea _______________________________________________________________________
+
+After using AutoHotkey for gaming and Windows system administration for several years, I became extremely frustrated with its design.  Almost every construct is dangerous (e.g. the pervasive use of silent failure), impractical (e.g. Sort operates on the contents of a string), or interacts badly with other constructs (e.g. libraries and programming language 'configuration' like StringCaseSense).
+
+I found no alternative that provided all of the features that I desire: keyboard, mouse, and gamepad remapping; keyboard, mouse, and gamepad hotkeys; a general-purpose programming language that supports defining data structures; image pattern recognition; GUI automation; and creating self-extracting archives with self-executing programs.
+
+I noticed that everything that I liked involved AutoHotkey's I/O and self-extracting archive facilities and everything that I disliked involved its programming language.
+
+I was aware that AutoHotkey.dll existed and that there were wrappers for it for acceptable programming languages.  I soon became aware that this was inadequate.  Most programming language implementations have no support for calling procedures in themselves directly from hooks in C like hotkeys require.  Most programming language implementations have no support for creating self-extracting archives with self-executing programs.
+
+I read some of AutoHotkey's source code to determine if it would be practical to fix the programming language.  I found many bad decisions (e.g. making all values COM objects (necessitating reference counting instead of tracing garbage collection), abandoning any potential benefits of making all values COM objects by ignoring the OLE Automation interface standards (e.g. the Collection and IEnumVARIANT interfaces), unnecessary hard-coded limits (e.g. an expression length limit), and refusing to use the C++ STL (resulting in redundant, inefficient code)) and many comments describing workarounds necessitated by these bad decisions or Windows version variations.  It appears it would be easier to start over than fix all of these flaws, and understanding how the desirable constructs work would be extremely difficult.
+
+I believed it might be possible to build something more usable atop AutoHotkey.
+
+It is difficult to implement an interpreter or compiler in a programming language that is difficult to use for much simpler tasks, so I was limited to writing libraries.
+
+I decided to use functional programming because eliminating unnecessary mutable state should make code attached to hotkeys safer and AutoHotkey's functions work better than its objects.
+
+AutoHotkey does not support closures, but it does support function objects.  I remembered that Moses Schönfinkel proved that lambda abstraction is unnecessary if you have the right combinators.  This led to developing the Func library that is the core of Facade.
+
+
+Guiding Principles _____________________________________________________________
+
+The principles are listed from most to least important.
+
+
+Avoid Problems:
+
+* Avoidable problems become more prevalent when solved.
+
+  Facade avoids the problem of how to use mutable state safely when hotkeys can launch multiple 'threads' by not using mutable state (except in the Random library).  It could have solved the problem by using Critical around the code in all classes' methods, but then anyone using it would have to do the same and latency would be worse.
+
+
+Do Not Cause Problems:
+
+* Do the safest thing.
+
+  Facade halts execution if an unhandled error occurs.
+
+  Mutability is not a bug, it's a feature, but it's the wrong default.  Facade's Dict type supports mutation, but Facade does not use mutable state (except in the Random library).
+
+* Do the least surprising thing.
+
+  Facade is consistent.
+
+  Facade functions that can return a copy of a data structure always return a copy of a data structure so that mutating the result is never surprising.
+
+* Do not break others' code.
+
+  Facade avoids breaking others' code by prefixing its definitions and not monkey patching.
+
+* Do not cause unnecessary incompatibility.
+
+  Facade does not define unnecessary incompatible types.
+
+  Facade's types can be enumerated like AutoHotkey's built-in types.
+
+* Discourage misuse.
+
+  What Facade does not include is as important as what it includes.
+
+  Facade does not conflate its data structures to allow them to be used in inefficient ways.
+
+
+Solve Problems:
+
+* Completeness is important.
+
+  Facade includes rarely used functions like Func_CWhile(Pred, Func) and Array_FoldR1(Func, Array) for completeness.
+
+
+Do Not Waste People's Time:
+
+* Explain errors (i.e. do not waste programmers' time).
+
+  Facade reports errors in a precise, detailed, and helpful way.
+
+* The simplicity of the interface is more important than the simplicity of the implementation (i.e. it is better to waste programmers' time than users' time because there are more users, and sometimes programmers are users).
+
+  I have made my best effort at providing a simple interface.
+
+  Facade suffers from the expression problem.
+
+  Facade is, effectively, a functional programming language, so it makes it easy to add new procedures but difficult to add new types that work with existing procedures.
+
+  AutoHotkey is, sort of, an object-oriented programming language, so it makes it easy to add new types that work with existing procedures but difficult to add new procedures.
+
+  The interaction of those two facts is particularly problematic.  It makes it difficult to add anything.
+
+  I can imagine solving this problem this way...
+
+  Facade's functions would dispatch to the correct code for built-in types by detecting the type (as it already does for type checking) and require user-defined types to implement certain interfaces.
+
+  Each of Facade's functions could use a respective interface.  Functions that accept multiple operands would dispatch to the code for the first operand.  Most functions that accept multiple operands would require that all their operands be covariant (i.e. the same type or a subtype) on the first operand's type and covariant on the first operand's return type (e.g. you can concatenate Strings and Arrays, but you cannot concatenate Strings with Arrays).  A counterexample is Eq(Args*).
+
+  However, that would result in unnecessarily complex interfaces.  Some of Facade's functions can use AutoHotkey's built-in interfaces to ensure good compatibility with the rest of AutoHotkey (e.g. left folds can be defined in terms of the Enumerator interfaces).  Some of Facade's functions can be implemented efficiently in terms of other Facade functions, so they do not require their own interface (e.g. Gen(Func, Init) can be implemented in terms of Unfold(MapFunc, Pred, GenFunc, Init)).  Some of Facade's functions would be best off sharing an interface to make bad definitions unlikely (e.g. the relational functions sharing a single comparison interface so that a pair of values cannot be both less than and greater than).
+
+  Some implementations of these interfaces would be best off shared (e.g. left folds and everything that can be built atop them).  This can be achieved via inheritance.
+
+  It is a common misconception that if the equality interface is implemented, the hash interface must be implemented.  This is due to conflating value and identity equality.  Only immutable types should implement the hash interface.  Otherwise, mutable values will clobber each other when used as dictionary keys instead of being properly indexed by their address.  Hashes must be computed lazily.  Otherwise, it is impossible to define potentially infinite, immutable types like Facade's Stream type.  The lack of these interfaces and their proper use explains why Facade's immutable List and Stream types are indexed by their identity instead of their value when used as dictionary keys.
+
+  This solves the problem for Facade's purposes, but it does not solve the problem for anyone wanting to add procedures to Facade's types.  The only mechanism AutoHotkey supports for that is monkey patching.  Monkey patching presents the risk of clobbering existing definitions.
+
+  The only mechanism AutoHotkey supports for reducing the risk of clobbering existing definitions is prefixing your definitions.
+
+  All of this, along with tolerating circular dependencies, leads to a design where most of Facade is in a F library that uses interfaces prefixed with "F_" like its functions, each collection type is in its own library with its constructor function and any functions to convert from and to bad types, and those collection types inherit implementations from abstract types.  The contents of _Sinks would become an abstract Seq type.  The loose function _DedupBy(Dict, Func, X) would be moved into the Seq library.  The loose functions _IsArray(Value) and _Push(A, X) would be moved into the Array library.  I find this aesthetically pleasing.
+
+  However, Facade's current design disambiguates some situations.
+
+  What should a generic Concat(Args*) return when passed no arguments?  This problem is inherent when making Concat(Args*) generic.  Clojure's answer is nil.  nil is the null pointer and the constant singleton empty List.  AutoHotkey's equivalent to the null pointer, the empty String, and empty preferred (e.g. used for arguments) sequence type, an empty Array, are not the same.  Which should it be?  The answer should probably be the empty String because the null property is more important and it is a constant singleton.
+
+  Should a generic Get(Key, Obj) perform index adjustment when passed a non-negative Integer and an Object?  This problem is caused by AutoHotkey conflating arrays and dictionaries.  The answer should probably be that it performs index adjustment if the Object can be considered a genuine Array because Array_Flatten(Array) must work that way.  The programmer can use Dicts if they want to avoid this ambiguity.
+
+  It is not clear that solving this problem is worthwhile.  AutoHotkey's type system is broken, and AutoHotkey v2's type system is expected to be broken in the same ways.  The proposed solution will not make it possible to define subtypes of or monkey patch built-in types.  Solving this problem might violate the design principle: "Design, but do not code, for change."  No one has requested the feature to add new types that work with Facade's procedures.
+
+* Conciseness and debuggability are more important than efficiency (i.e. it is better to waste computers' time than humans' time).
+
+  Facade is an abstraction, and like all abstractions that do not compile to literals, it causes overhead.  In exchange, it reduces the amount of code the programmer must write and the time they spend debugging it.
+
+* Design, but do not code, for change (i.e. do not waste your time).
+
+  Designing with likely changes in mind makes it easier to adapt your code, but writing extra code to cope with changes that might never occur causes bloat.
+
+  My previous attempt at a functional programming library was broken by the addition of the BoundFunc type because it does not retain the information the Func type does and I was using that information for validation.  It is tempting to assume that this was intentional, but I should probably apply Hanlon's razor.  I have intentionally written Facade in such a way that breaking it is likely to break a lot of other code, just in case it was intentional.
+
+  I designed Facade with AutoHotkey v2 in mind.  The _Validate and Math libraries can be deleted with extensive but simple editing when AutoHotkey starts throwing its own exceptions.  Random([Min, Max]) and RandomSeed(Seed) can be deleted from the Random library and code using them can remain unchanged.
+
+
+Overarching Design _____________________________________________________________
+
+Facade is a mashup of constructs from many functional programming languages and libraries.  This presents the risk of making a maladroit mess and raises the question of scope.
+
+The risk of making a maladroit mess is mitigated by relentlessly pursuing good naming, consistency, and elegance.  Facade's names are familiar and intention revealing (if you are a functional programmer) and short (so that expressions are readable).  Facade's library, function, and parameter order; naming; and processing of mutable values is consistent (so that nothing is surprising and no code needs to be written to abstract over inconsistencies).  Facade's elegance can be judged by its simplicity (it has few primitive constructs), generality (those primitive constructs can be used for many different purposes), composability (its constructs can be combined to produce more complex constructs), and the brevity of code that uses it (code using Facade is usually shorter than the equivalent code written directly in AutoHotkey).  You do not need to learn a lot of different things to do a lot of different things with Facade.
+
+Facade's scope is neither minimalist nor kitchen sink.  Minimalist designs often cause Turing tarpits.  Kitchen sink designs often cause difficulty finding the desired construct among the clutter.  I attempted to strike a balance by adding anything that seemed useful in most programs then removing anything experience proved to be redundant or useless.
+
+Facade's String library's scope is minimalist because it did not seem useful to expand it.  AutoHotkey's built-in string processing functions seem adequate, though they suffer from the usual inconsistency.  Silent failures return the empty string, and the empty string is valid input to most string processing functions, so there is little opportunity for improved error detection.
+
+A date/time library is outside Facade's scope because it involves I/O (to read the current time) and developing a good one involves solving social problems (e.g. ambiguous and changing formatting, changing daylight saving time policies, changing time zones, etc.) that even large organizations have found too difficult to solve.  It appears that the best way to handle date/time problems is to avoid them, but if you must solve them, keep everything in UTC format and convert it from and to the preferred local format only for I/O.  Anyone insisting on attempting such a library should probably clone java.time.
+
+Facade's architectural style is inspired by production lines.  This analogy is recursive.  Both the libraries and the functions within them represent machines that are connected by variables that represent conveyor belts.  This analogy is strongest in streams.
+
+The functions are usually grouped into libraries based on the type of their subject.  Most functions are closed (i.e. they return the type they operate on).
+
+The libraries appear in topologically sorted order in the documentation because concepts that are foundational must be understood before concepts built atop them can be understood.
+
+The functions appear in an order intended to reveal relationships between the libraries and functions because that eases understanding.  Related functions appear near one another.  Functions that adapt types for use by the library appear at the beginning.  Functions that adapt the library's type for use by other libraries appear at the end.  Other functions often appear in topologically sorted order (e.g. eager filters and maps are built atop folds).
+
+Some libraries have unique organizing principles.  The operator library is ordered by descending precedence.  The combinator library is ordered lexicographically by the combinators' names.  The stream library is broken down into sources, flows, and sinks because being aware of whether an operation is lazy or eager is necessary to avoid nontermination.
+
+Most functions are named such that their names would not collide and would be intelligible without a library prefix.  This resulted in better names and a design that is easier to abstract over types.
+
+Functions are named via agglutination.  This is considered a bad practice by some.  I disagree because it makes relevant functions easy to find when searching and there is often no intention revealing name for a highly abstract function.  The agglutinative name reveals and reminds of the behavior of the function.  An "Is" prefix reveals that the function is a predicate (operators do not use this convention).  A "By" component (usually a suffix) reveals that the function accepts a function object to access or compute key values.  A "With" component (usually a suffix) reveals that the function accepts a function object to apply to arguments it computes.  A "W" component (usually infix) means "with" without implying the behavior just described.
+
+Parameters are ordered from most to least frequently bound.  This makes specializing functions with Bind(Func, Args*) as easy as possible.  It also results in a design where the index parameter comes before the collection parameter.  This might seem strange, but experience has proven it to be the most useful order.
+
+Parameter names make use of AutoHotkey's separate function and variable namespaces.  Parameters are often named after their type.
+
+
+_IsArray _______________________________________________________________________
+
+
+
+
+_Validate ______________________________________________________________________
+
+
+
+
+Op _____________________________________________________________________________
+
+
+
+
+Func ___________________________________________________________________________
+
+
+
+
+Math ___________________________________________________________________________
+
+
+
+
+String _________________________________________________________________________
+
+
+
+
+_Push __________________________________________________________________________
+
+
+
+
+_Dict __________________________________________________________________________
+
+
+
+
+_DedupBy _______________________________________________________________________
+
+
+
+
+_Sinks _________________________________________________________________________
+
+
+
+
+Array __________________________________________________________________________
+
+
+
+
+List ___________________________________________________________________________
+
+
+
+
+Stream _________________________________________________________________________
+
+
+
+
+Dict ___________________________________________________________________________
+
+
+
+
+Random _________________________________________________________________________
+
+
