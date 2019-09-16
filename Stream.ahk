@@ -1,12 +1,12 @@
-#Include Is.ahk
-#Include _Validate.ahk
-#Include Op.ahk
-#Include Func.ahk
-#Include _Push.ahk
-#Include _Dict.ahk
-#Include _DedupBy.ahk
-#Include _Sinks.ahk
-#Include Array.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Op.ahk
+#include %A_LineFile%\..\Func.ahk
+#include %A_LineFile%\..\_Push.ahk
+#include %A_LineFile%\..\_Dict.ahk
+#include %A_LineFile%\..\_DedupBy.ahk
+#include %A_LineFile%\..\_Sinks.ahk
+#include %A_LineFile%\..\Array.ahk
 
 ;-------------------------------------------------------------------------------
 ; Sources

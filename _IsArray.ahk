@@ -1,4 +1,4 @@
-#Include Type.ahk
+#include %A_LineFile%\..\Type.ahk
 
 _IsArray(Value)
 {

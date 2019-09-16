@@ -1,7 +1,7 @@
-#Include Is.ahk
-#Include Type.ahk
-#Include IsFuncObj.ahk
-#Include _IsArray.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\Type.ahk
+#include %A_LineFile%\..\IsFuncObj.ahk
+#include %A_LineFile%\..\_IsArray.ahk
 
 ;-------------------------------------------------------------------------------
 ; Auxiliary Functions

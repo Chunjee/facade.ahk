@@ -1,9 +1,9 @@
-#Include Is.ahk
-#Include Type.ahk
-#Include IsFuncObj.ahk
-#Include _IsArray.ahk
-#Include _Validate.ahk
-#Include Array.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\Type.ahk
+#include %A_LineFile%\..\IsFuncObj.ahk
+#include %A_LineFile%\..\_IsArray.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Array.ahk
 
 ; This is a redundant Array FoldL definition to avoid circular dependencies.
 _Op_ArrayFoldL(Func, Init, Array)

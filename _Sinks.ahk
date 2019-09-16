@@ -1,5 +1,5 @@
-#Include Op.ahk
-#Include _Dict.ahk
+#include %A_LineFile%\..\Op.ahk
+#include %A_LineFile%\..\_Dict.ahk
 
 _Sinks_Count(Sequence)
 {

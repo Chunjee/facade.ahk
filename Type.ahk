@@ -1,4 +1,4 @@
-#Include Is.ahk
+#include %A_LineFile%\..\Is.ahk
 
 class _Type
 {

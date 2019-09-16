@@ -1,7 +1,7 @@
-#Include Is.ahk
-#Include _Validate.ahk
-#Include _Sinks.ahk
-#Include Array.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\_Sinks.ahk
+#include %A_LineFile%\..\Array.ahk
 
 class List
 {

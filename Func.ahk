@@ -1,6 +1,6 @@
-#Include Is.ahk
-#Include _Validate.ahk
-#Include Op.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Op.ahk
 
 class Func_Bindable
 {

@@ -1,5 +1,5 @@
-#Include _Validate.ahk
-#Include Op.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Op.ahk
 
 String_Concat(Strings*)
 {

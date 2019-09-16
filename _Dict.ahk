@@ -1,4 +1,4 @@
-#Include _Validate.ahk
+#include %A_LineFile%\..\_Validate.ahk
 
 class Dict
 {

@@ -1,9 +1,9 @@
-#Include Is.ahk
-#Include _Validate.ahk
-#Include Func.ahk
-#Include _Push.ahk
-#Include _Dict.ahk
-#Include Array.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Func.ahk
+#include %A_LineFile%\..\_Push.ahk
+#include %A_LineFile%\..\_Dict.ahk
+#include %A_LineFile%\..\Array.ahk
 
 Dict(Items*)
 {

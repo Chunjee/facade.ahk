@@ -1,4 +1,4 @@
-#Include _Validate.ahk
+#include %A_LineFile%\..\_Validate.ahk
 
 Random(Min := 0, Max := 2147483647)
 {

@@ -1,13 +1,13 @@
-#Include Is.ahk
-#Include Type.ahk
-#Include _IsArray.ahk
-#Include _Validate.ahk
-#Include Op.ahk
-#Include Func.ahk
-#Include _Push.ahk
-#Include _Dict.ahk
-#Include _DedupBy.ahk
-#Include _Sinks.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\Type.ahk
+#include %A_LineFile%\..\_IsArray.ahk
+#include %A_LineFile%\..\_Validate.ahk
+#include %A_LineFile%\..\Op.ahk
+#include %A_LineFile%\..\Func.ahk
+#include %A_LineFile%\..\_Push.ahk
+#include %A_LineFile%\..\_Dict.ahk
+#include %A_LineFile%\..\_DedupBy.ahk
+#include %A_LineFile%\..\_Sinks.ahk
 
 Array_FromBadArray(Func, Array, Length := "")
 {
