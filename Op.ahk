@@ -1,8 +1,9 @@
-#Include <Is>
-#Include <Type>
-#Include <IsFuncObj>
-#Include <_IsArray>
-#Include <_Validate>
+#Include Is.ahk
+#Include Type.ahk
+#Include IsFuncObj.ahk
+#Include _IsArray.ahk
+#Include _Validate.ahk
+#Include Array.ahk
 
 ; This is a redundant Array FoldL definition to avoid circular dependencies.
 _Op_ArrayFoldL(Func, Init, Array)

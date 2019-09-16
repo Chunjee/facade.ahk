@@ -1,4 +1,4 @@
-#Include <Type>
+#Include Type.ahk
 
 _IsArray(Value)
 {

@@ -1,7 +1,7 @@
-#Include <Is>
-#Include <Type>
-#Include <IsFuncObj>
-#Include <_IsArray>
+#Include Is.ahk
+#Include Type.ahk
+#Include IsFuncObj.ahk
+#Include _IsArray.ahk
 
 ;-------------------------------------------------------------------------------
 ; Auxiliary Functions

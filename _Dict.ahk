@@ -1,4 +1,4 @@
-#Include <_Validate>
+#Include _Validate.ahk
 
 class Dict
 {

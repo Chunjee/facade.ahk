@@ -1,5 +1,5 @@
-#Include <Op>
-#Include <_Dict>
+#Include Op.ahk
+#Include _Dict.ahk
 
 _Sinks_Count(Sequence)
 {

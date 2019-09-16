@@ -1,13 +1,13 @@
-#Include <Is>
-#Include <Type>
-#Include <_IsArray>
-#Include <_Validate>
-#Include <Op>
-#Include <Func>
-#Include <_Push>
-#Include <_Dict>
-#Include <_DedupBy>
-#Include <_Sinks>
+#Include Is.ahk
+#Include Type.ahk
+#Include _IsArray.ahk
+#Include _Validate.ahk
+#Include Op.ahk
+#Include Func.ahk
+#Include _Push.ahk
+#Include _Dict.ahk
+#Include _DedupBy.ahk
+#Include _Sinks.ahk
 
 Array_FromBadArray(Func, Array, Length := "")
 {

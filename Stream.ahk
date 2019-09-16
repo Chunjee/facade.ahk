@@ -1,12 +1,12 @@
-#Include <Is>
-#Include <_Validate>
-#Include <Op>
-#Include <Func>
-#Include <_Push>
-#Include <_Dict>
-#Include <_DedupBy>
-#Include <_Sinks>
-#Include <Array>
+#Include Is.ahk
+#Include _Validate.ahk
+#Include Op.ahk
+#Include Func.ahk
+#Include _Push.ahk
+#Include _Dict.ahk
+#Include _DedupBy.ahk
+#Include _Sinks.ahk
+#Include Array.ahk
 
 ;-------------------------------------------------------------------------------
 ; Sources

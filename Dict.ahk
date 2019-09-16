@@ -1,9 +1,9 @@
-#Include <Is>
-#Include <_Validate>
-#Include <Func>
-#Include <_Push>
-#Include <_Dict>
-#Include <Array>
+#Include Is.ahk
+#Include _Validate.ahk
+#Include Func.ahk
+#Include _Push.ahk
+#Include _Dict.ahk
+#Include Array.ahk
 
 Dict(Items*)
 {

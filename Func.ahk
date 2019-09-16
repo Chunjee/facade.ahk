@@ -1,6 +1,6 @@
-#Include <Is>
-#Include <_Validate>
-#Include <Op>
+#Include Is.ahk
+#Include _Validate.ahk
+#Include Op.ahk
 
 class Func_Bindable
 {

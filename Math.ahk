@@ -1,5 +1,5 @@
-#Include <Is>
-#Include <_Validate>
+#Include Is.ahk
+#Include _Validate.ahk
 
 Math_Abs(X)
 {

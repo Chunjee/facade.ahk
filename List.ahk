@@ -1,7 +1,7 @@
-#Include <Is>
-#Include <_Validate>
-#Include <_Sinks>
-#Include <Array>
+#Include Is.ahk
+#Include _Validate.ahk
+#Include _Sinks.ahk
+#Include Array.ahk
 
 class List
 {

@@ -1,5 +1,5 @@
-#Include <_Validate>
-#Include <Op>
+#Include _Validate.ahk
+#Include Op.ahk
 
 String_Concat(Strings*)
 {
