@@ -1,5 +1,5 @@
-#include Is.ahk
-#include _Validate.ahk
+#include %A_LineFile%\..\Is.ahk
+#include %A_LineFile%\..\_Validate.ahk
 
 Math_Abs(X)
 {
